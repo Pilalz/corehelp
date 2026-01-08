@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->nullOnDelete();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->longText('content'); // Isi Panduan
+            $table->string('file_path')->nullable();
+            $table->longText('content')->nullable();
             $table->boolean('is_published')->default(false);
             $table->integer('helpful_count')->default(0);
             $table->timestamps();
