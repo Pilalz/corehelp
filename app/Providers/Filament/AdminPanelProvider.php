@@ -28,6 +28,56 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('CoreHelp')
+            ->globalSearch(false)
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::HEAD_END,
+                fn (): string => '<style>
+                    /* Sidebar */
+                    .fi-sidebar {
+                        background-color: white !important;
+                        border-right: 1px solid #e5e7eb !important;
+                        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+                    }
+
+                    /* Header (Topbar) */
+                    .fi-topbar {
+                        background-color: white !important;
+                        border-bottom: 1px solid #e5e7eb !important;
+                    }
+
+                    /* Background Halaman Utama */
+                    .fi-main {
+                        background-color: #f9fafb !important;
+                    }
+
+                    /* Breadcrumb */
+                    // .fi-header {
+                    //     background-color: white !important;
+                    //     border: 1px solid #e5e7eb !important;
+                    //     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+                    //     border-radius: 0.75rem !important;
+                    //     padding: 10px 20px !important;
+                    //     margin: 0 !important;
+                    // }
+
+                    /* Tabel & Kontainer Konten */
+                    .fi-ta-ctn {
+                        background-color: white !important;
+                        border: 1px solid #e5e7eb !important;
+                        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+                        border-radius: 0.75rem !important;
+                    }
+
+                    /* Tabel & Kontainer Konten */
+                    // .fi-page-main {
+                    //     background-color: red !important;
+                    //     border: 1px solid #e5e7eb !important;
+                    //     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+                    //     border-radius: 0.75rem !important;
+                    // }
+                </style>'
+            )
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -39,7 +89,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -28,12 +28,26 @@ class TicketShow extends Component
     {
         $this->validate([
             'replyContent' => 'required',
+            'replyAttachments.*' => 'nullable|file|mimes:png,jpg,jpeg,gif,pdf,doc,docx|max:2048',
         ]);
 
-        // Simpan lampiran balasan (jika ada)
+        // Simpan lampiran balasan (jika ada) — simpan nama asli + path
         $paths = [];
         foreach ($this->replyAttachments as $file) {
-            $paths[] = $file->store('ticket-replies', 'public');
+            if (is_string($file)) {
+                // already stored path (fallback)
+                $paths[] = [
+                    'name' => basename($file),
+                    'path' => $file,
+                ];
+                continue;
+            }
+
+            $stored = $file->store('ticket-replies', 'public');
+            $paths[] = [
+                'name' => $file->getClientOriginalName(),
+                'path' => $stored,
+            ];
         }
 
         TicketReply::create([

@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use App\Filament\Resources\Tickets\RelationManagers\RepliesRelationManager;
 
 class TicketResource extends Resource
 {
@@ -48,7 +49,7 @@ class TicketResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\RepliesRelationManager::class,
         ];
     }
 

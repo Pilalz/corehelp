@@ -22,6 +22,7 @@ class Ticket extends Model
         'category_id',
         'subject',
         'content',
+        'attachments',
         'status',
         'priority',
         'resolution_summary',

@@ -18,4 +18,15 @@ class EditArticle extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if (isset($data['file_path']) && !empty($data['file_path'])) {
+            $data['input_type'] = 'upload';
+        } else {
+            $data['input_type'] = 'manual';
+        }
+
+        return $data;
+    }
 }

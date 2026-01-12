@@ -8,9 +8,9 @@ use App\Livewire\TicketList;
 use App\Livewire\TicketCreate;
 use App\Livewire\TicketShow;
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/', ArticleList::class)->name('article.index');
 Route::get('/article/{slug}', ArticleShow::class)->name('article.show');

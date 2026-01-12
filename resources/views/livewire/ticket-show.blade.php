@@ -13,10 +13,37 @@
 
             @if($this->ticket->attachments)
                 <div class="mt-4 flex gap-2 flex-wrap">
-                    @foreach($this->ticket->attachments as $img)
-                        <a href="{{ Storage::url($img) }}" target="_blank">
-                            <img src="{{ Storage::url($img) }}" class="h-24 w-24 object-cover rounded border hover:opacity-75">
-                        </a>
+                    @foreach($this->ticket->attachments as $attachment)
+                        @php
+                            // support old string-path format and new object format
+                            if (is_array($attachment) || is_object($attachment)) {
+                                $name = $attachment['name'] ?? $attachment->name ?? basename($attachment['path'] ?? '');
+                                $path = $attachment['path'] ?? $attachment->path ?? null;
+                            } else {
+                                $name = basename($attachment);
+                                $path = $attachment;
+                            }
+
+                            $url = $path ? Storage::url($path) : '#';
+                            $mime = null;
+                            try { $mime = $path ? Storage::mimeType($path) : null; } catch (Exception $e) { $mime = null; }
+                        @endphp
+
+                        @if($mime && Str::startsWith($mime, 'image/'))
+                            <a href="{{ $url }}" target="_blank">
+                                <img src="{{ $url }}" class="h-24 w-24 object-cover rounded border hover:opacity-75" alt="{{ $name }}">
+                            </a>
+                        @elseif($mime && Str::contains($mime, 'pdf'))
+                            <a href="{{ $url }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border rounded">
+                                <svg class="h-5 w-5 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2h6l4 4v10a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg>
+                                <span class="text-xs">{{ $name }}</span>
+                            </a>
+                        @else
+                            <a href="{{ $url }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 bg-gray-50 border rounded text-sm">
+                                <svg class="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2h6l4 4v10a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/></svg>
+                                <span class="truncate">{{ $name }}</span>
+                            </a>
+                        @endif
                     @endforeach
                 </div>
             @endif
@@ -34,12 +61,32 @@
                         <span class="text-xs text-gray-500">{{ $reply->created_at->diffForHumans() }}</span>
                     </div>
                     <div class="text-gray-800">
-                        {{ $reply->content }}
+                        
+                        {!! nl2br(e($reply->content)) !!}
                     </div>
                     @if($reply->attachments)
-                        <div class="mt-2 flex gap-2">
-                            @foreach($reply->attachments as $img)
-                                <a href="{{ Storage::url($img) }}" target="_blank" class="text-blue-500 text-xs underline">Lihat Lampiran</a>
+                        <div class="mt-2 flex gap-2 flex-wrap">
+                            @foreach($reply->attachments as $attachment)
+                                @php
+                                    if (is_array($attachment) || is_object($attachment)) {
+                                        $name = $attachment['name'] ?? $attachment->name ?? basename($attachment['path'] ?? '');
+                                        $path = $attachment['path'] ?? $attachment->path ?? null;
+                                    } else {
+                                        $name = basename($attachment);
+                                        $path = $attachment;
+                                    }
+                                    $url = $path ? Storage::url($path) : '#';
+                                    $mime = null;
+                                    try { $mime = $path ? Storage::mimeType($path) : null; } catch (Exception $e) { $mime = null; }
+                                @endphp
+
+                                @if($mime && Str::startsWith($mime, 'image/'))
+                                    <a href="{{ $url }}" target="_blank">
+                                        <img src="{{ $url }}" class="h-16 w-16 object-cover rounded border hover:opacity-75" alt="{{ $name }}">
+                                    </a>
+                                @else
+                                    <a href="{{ $url }}" target="_blank" class="text-blue-500 text-xs underline">{{ $name }}</a>
+                                @endif
                             @endforeach
                         </div>
                     @endif
@@ -52,10 +99,30 @@
             <h3 class="font-bold text-md mb-2">Balas Tiket</h3>
             <form wire:submit.prevent="saveReply">
                 <textarea wire:model="replyContent" class="w-full rounded border-gray-300" rows="3" placeholder="Tulis balasan..."></textarea>
-                <div class="flex justify-between mt-2 items-center">
+                @error('replyContent') <div class="text-red-500 text-sm">{{ $message }}</div> @enderror
+
+                <div class="mt-2">
                     <input type="file" wire:model="replyAttachments" multiple class="text-sm">
-                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Kirim Balasan</button>
+                    @error('replyAttachments.*') <div class="text-red-500 text-sm">{{ $message }}</div> @enderror
+
+                    <!-- show selected filenames (client-side, Livewire tempFile objects) -->
+                    @if(!empty($replyAttachments))
+                        <div class="mt-2 text-sm text-gray-600">
+                            <strong>Selected files:</strong>
+                            <ul class="list-disc list-inside">
+                                @foreach($replyAttachments as $i => $file)
+                                    <li>{{ is_object($file) && method_exists($file, 'getClientOriginalName') ? $file->getClientOriginalName() : (is_array($file) && isset($file['name']) ? $file['name'] : (string)$file) }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                 </div>
+
+                <div class="flex justify-end mt-3">
+                    <button type="submit" wire:loading.attr="disabled" wire:target="replyAttachments" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Kirim Balasan</button>
+                </div>
+
+                <div wire:loading wire:target="replyAttachments" class="text-sm text-gray-500 mt-2">Mengunggah lampiran...</div>
             </form>
         </div>
         @else

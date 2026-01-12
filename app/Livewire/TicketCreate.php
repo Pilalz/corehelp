@@ -20,7 +20,7 @@ class TicketCreate extends Component
         'subject' => 'required|min:5',
         'category_id' => 'required',
         'content' => 'required|min:10',
-        'attachments.*' => 'image|max:2048',
+        'attachments.*' => 'file|mimes:png,jpg,jpeg,gif,pdf,doc,docx|max:2048',
     ];
 
     public function save()
@@ -28,8 +28,12 @@ class TicketCreate extends Component
         $this->validate();
 
         $filePaths = [];
-        foreach ($this->attachments as $file) {            
-            $filePaths[] = $file->store('tickets', 'public');
+        foreach ($this->attachments as $file) {
+            $stored = $file->store('tickets', 'public');
+            $filePaths[] = [
+                'name' => $file->getClientOriginalName(),
+                'path' => $stored,
+            ];
         }
 
         Ticket::create([
