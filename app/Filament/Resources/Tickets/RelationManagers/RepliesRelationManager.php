@@ -6,16 +6,15 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema; 
-use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 
-// --- PERBAIKAN IMPORT (SEMUA DARI GLOBAL ACTIONS) ---
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction; 
-use Filament\Actions\BulkActionGroup; // PENTING: Ini yang bikin error tadi
+use Filament\Actions\BulkActionGroup;
 
 class RepliesRelationManager extends RelationManager
 {
@@ -26,7 +25,7 @@ class RepliesRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                RichEditor::make('content')
+                Textarea::make('content')
                     ->label('Isi Balasan')
                     ->required()
                     ->columnSpanFull(),
@@ -49,18 +48,14 @@ class RepliesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pengirim')
-                    ->description(fn ($record) => $record->user->role === 'staff' ? 'Staff / Admin' : 'User')
-                    ->color(fn ($record) => $record->user->role === 'staff' ? 'warning' : 'success')
+                    ->description(fn ($record) => $record->user->role === 'user' ? 'User' : 'Admin')
+                    ->color(fn ($record) => $record->user->role === 'user' ? 'primary' : 'warning')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('content')
                     ->html()
                     ->limit(50)
                     ->wrap(),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable(),
             ])
             ->headerActions([
                 CreateAction::make()

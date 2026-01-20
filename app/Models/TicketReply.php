@@ -34,4 +34,27 @@ class TicketReply extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    protected static function booted(): void
+    {
+        static::created(function (TicketReply $reply) {
+            $reply->load('ticket');
+
+            // Admin balas = Solved
+            if ($reply->user_id !== $reply->ticket->user_id && $reply->user->role === 'admin') {
+                $reply->ticket->update([
+                    'status' => 'solved',
+                    'resolved_at' => now(),
+                ]);
+            }
+
+            // User balas = Re-Open
+            elseif ($reply->user_id === $reply->ticket->user_id && $reply->ticket->status === 'solved') {
+                $reply->ticket->update([
+                    'status' => 're-open',
+                    'resolved_at' => null,
+                ]);
+            }
+        });
+    }
 }

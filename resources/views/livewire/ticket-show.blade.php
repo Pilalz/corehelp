@@ -53,10 +53,10 @@
             <h3 class="font-bold text-lg text-gray-700">Diskusi / Balasan</h3>
             
             @foreach($this->ticket->replies as $reply)
-                <div class="bg-white p-4 rounded-lg shadow {{ $reply->user->isStaff() ? 'border-l-4 border-orange-400 bg-orange-50' : '' }}">
+                <div class="bg-white p-4 rounded-lg shadow {{ $reply->user->isUser() ? 'border-l-4 border-indigo-500 bg-indigo-50' : 'border-l-4 border-orange-400 bg-orange-50' }}">
                     <div class="flex justify-between mb-2">
-                        <span class="font-bold {{ $reply->user->isStaff() ? 'text-orange-600' : 'text-indigo-600' }}">
-                            {{ $reply->user->name }} {{ $reply->user->isStaff() ? '(Staff)' : '' }}
+                        <span class="font-bold {{ $reply->user->isUser() ? 'text-indigo-600' : 'text-orange-600' }}">
+                            {{ $reply->user->name }} {{ $reply->user->isUser() ? '(User)' : '' }}
                         </span>
                         <span class="text-xs text-gray-500">{{ $reply->created_at->diffForHumans() }}</span>
                     </div>
@@ -98,11 +98,11 @@
         <div class="bg-white p-6 shadow sm:rounded-lg">
             <h3 class="font-bold text-md mb-2">Balas Tiket</h3>
             <form wire:submit.prevent="saveReply">
-                <textarea wire:model="replyContent" class="w-full rounded border-gray-300" rows="3" placeholder="Tulis balasan..."></textarea>
+                <textarea wire:model="replyContent" wire:key="reply-box-{{ $fileInputId }}" class="w-full rounded border-gray-300" rows="3" placeholder="Tulis balasan..."></textarea>
                 @error('replyContent') <div class="text-red-500 text-sm">{{ $message }}</div> @enderror
 
                 <div class="mt-2">
-                    <input type="file" wire:model="replyAttachments" multiple class="text-sm">
+                    <input type="file" wire:model="replyAttachments" id="attachments-{{ $fileInputId }}" multiple class="text-sm">
                     @error('replyAttachments.*') <div class="text-red-500 text-sm">{{ $message }}</div> @enderror
 
                     <!-- show selected filenames (client-side, Livewire tempFile objects) -->

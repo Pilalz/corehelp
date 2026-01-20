@@ -33,7 +33,10 @@ class TicketForm
                                             ->required()
                                             ->columnSpanFull(),
 
-                                        FileUpload::make('attachments'),
+                                        FileUpload::make('attachments')
+                                            ->multiple()
+                                            ->directory('tickets')
+                                            ->disk('public'),
 
                                         Textarea::make('resolution_summary')
                                             ->columnSpanFull()

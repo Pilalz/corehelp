@@ -12,6 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
 use App\Models\Category;
+use Filament\Tables\Filters\TernaryFilter;
 
 class ArticlesTable
 {
@@ -35,6 +36,7 @@ class ArticlesTable
                     ->label('Category')
                     ->relationship('category', 'name')
                     ->preload(),
+                TernaryFilter::make('is_published'),
             ])
             ->recordActions([
                 ViewAction::make(),

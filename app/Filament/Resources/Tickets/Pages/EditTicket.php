@@ -18,4 +18,25 @@ class EditTicket extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if (isset($data['attachments']) && is_array($data['attachments'])) {
+            
+            $cleanedAttachments = [];
+            
+            foreach ($data['attachments'] as $file) {
+                if (is_array($file) && isset($file['path'])) {
+                    $cleanedAttachments[] = $file['path'];
+                } 
+                elseif (is_string($file)) {
+                    $cleanedAttachments[] = $file;
+                }
+            }
+
+            $data['attachments'] = $cleanedAttachments;
+        }
+
+        return $data;
+    }
 }

@@ -63,6 +63,22 @@ class ArticleForm
                                             ->fileAttachmentsDirectory('articles-images')
                                             ->fileAttachmentsDisk('public')
                                             ->fileAttachmentsVisibility('public')
+                                            ->toolbarButtons([
+                                                ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
+                                                ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
+                                                ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+                                                ['table', 'attachFiles', 'highlight', 'grid'],
+                                                ['undo', 'redo'],
+                                            ])
+                                            ->floatingToolbars([
+                                                'table' => [
+                                                    'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
+                                                    'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
+                                                    'tableMergeCells', 'tableSplitCell',
+                                                    'tableToggleHeaderRow', 'tableToggleHeaderCell',
+                                                    'tableDelete',
+                                                ],
+                                            ])
                                             ->columnSpanFull(),
                                         FileUpload::make('file_path')
                                             ->label('Upload File (PDF)')

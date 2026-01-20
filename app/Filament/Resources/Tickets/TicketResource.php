@@ -15,7 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use App\Filament\Resources\Tickets\RelationManagers\RepliesRelationManager;
+// use App\Filament\Resources\Tickets\RelationManagers\RepliesRelationManager;
 
 class TicketResource extends Resource
 {
@@ -49,7 +49,7 @@ class TicketResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\RepliesRelationManager::class,
+            // RelationManagers\RepliesRelationManager::class,
         ];
     }
 
@@ -60,6 +60,7 @@ class TicketResource extends Resource
             'create' => CreateTicket::route('/create'),
             'view' => ViewTicket::route('/{record}'),
             'edit' => EditTicket::route('/{record}/edit'),
+            'chat' => Pages\ChatTicket::route('/{record}/chat'),
         ];
     }
 }

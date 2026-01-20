@@ -12,8 +12,10 @@ class TicketShow extends Component
     use WithFileUploads;
 
     public Ticket $ticket;
-    public $replyContent;
+    public $replyContent = '';
     public $replyAttachments = [];
+
+    public $fileInputId = 1;
 
     public function mount($id)
     {
@@ -56,14 +58,12 @@ class TicketShow extends Component
             'content' => $this->replyContent,
             'attachments' => $paths,
         ]);
-        
-        // Update status tiket jadi 'open' lagi jika user membalas (biar admin notic)
-        // Opsional, tergantung flow kamu
-        // $this->ticket->update(['status' => 'open']);
 
-        $this->replyContent = '';
-        $this->replyAttachments = [];
-        $this->ticket->refresh(); // Refresh data biar komen baru muncul
+        $this->reset(['replyContent', 'replyAttachments']);
+
+        $this->fileInputId++;
+
+        $this->ticket->refresh();
     }
 
     public function render()

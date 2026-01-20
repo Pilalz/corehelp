@@ -8,8 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Ticket;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -49,14 +51,27 @@ class User extends Authenticatable
         ];
     }
 
-    public function isStaff(): bool
+    public function isUser(): bool
     {
-        return $this->role === 'staff';
+        return $this->role === 'user';
     }
 
     // Relasi: User punya banyak tiket
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {   
+        return $this->role === 'admin';
+        
+        // CATAAN:
+        // Jika nanti kamu punya panel lain (misal panel 'staff'), 
+        // kamu bisa cek ID panelnya:
+        // if ($panel->getId() === 'admin') {
+        //     return $this->role === 'admin';
+        // }
+        // return true;
     }
 }

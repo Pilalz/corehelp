@@ -10,8 +10,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\HtmlString;
 
 class TicketInfolist
 {
@@ -32,14 +31,12 @@ class TicketInfolist
 
                                         TextEntry::make('content')
                                             ->html()
-                                            ->prose(),
+                                            ->formatStateUsing(fn (string $state): HtmlString => new HtmlString(nl2br(e($state)))),
 
                                         TextEntry::make('attachments')
                                             ->label('Attachments')
                                             ->html()
                                             ->formatStateUsing(function ($state) {
-                                                Log::info('attachments.raw', ['state' => $state]);
-
                                                 // normalize: if stored as JSON string, decode it; if comma/newline separated string, split it
                                                     if (is_string($state)) {
                                                     $decoded = json_decode($state, true);
@@ -53,9 +50,6 @@ class TicketInfolist
                                                         $state = array_values($parts);
                                                     }
                                                 }
-
-                                                Log::info('attachments.normalized', ['normalized' => $state]);
-
                                                     // If state is a single object (attachment) or an associative array (single attachment), wrap it
                                                     if (is_object($state)) {
                                                         $state = [$state];
@@ -87,7 +81,6 @@ class TicketInfolist
                                                             }
                                                         }
                                                         $path = $found ?? $raw;
-                                                        Log::info('attachments.found', ['raw' => $raw, 'found' => $found]);
                                                     }
 
                                                     $url = ($path && Storage::disk('public')->exists($path)) ? Storage::url($path) : '#';
@@ -130,9 +123,11 @@ class TicketInfolist
                                             ->badge()
                                             ->color(fn (string $state): string => match ($state) {
                                                 'open' => 'primary',
+                                                're-open' => 'primary',
                                                 'solved' => 'success',
                                                 'rejected' => 'danger',
-                                            }),
+                                            })
+                                            ->formatStateUsing(fn ($state) => ucwords(strtolower($state))),
 
                                         TextEntry::make('priority')
                                             ->label('Status')
@@ -142,7 +137,8 @@ class TicketInfolist
                                                 'medium' => 'warning',
                                                 'low' => 'success',
                                                 'high' => 'danger',
-                                            }),
+                                            })
+                                            ->formatStateUsing(fn ($state) => ucwords(strtolower($state))),
 
                                         TextEntry::make('resolved_at')
                                             ->label('Solved At')

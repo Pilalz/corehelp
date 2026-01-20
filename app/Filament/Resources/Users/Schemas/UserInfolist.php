@@ -4,6 +4,8 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Icons\Heroicon;
 
 class UserInfolist
 {
@@ -11,16 +13,17 @@ class UserInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('name'),
-                TextEntry::make('email')
-                    ->label('Email address'),
-                TextEntry::make('email_verified_at')
-                    ->dateTime(),
-                TextEntry::make('role'),
-                TextEntry::make('created_at')
-                    ->dateTime(),
-                TextEntry::make('updated_at')
-                    ->dateTime(),
+                Section::make('User')
+                    ->icon(Heroicon::UserCircle)
+                    ->columnSpanFull()
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('email')
+                            ->label('Email address'),
+                        TextEntry::make('role')
+                            ->badge()
+                            ->formatStateUsing(fn ($state) => ucwords(strtolower($state))),
+                    ]),
             ]);
     }
 }
