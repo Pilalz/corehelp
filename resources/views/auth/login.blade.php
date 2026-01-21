@@ -3,7 +3,7 @@
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <div class="flex flex-row h-screen">
-        <div class="hidden sm:flex bg-gradient-to-r from-indigo-900 via-blue-800 to-sky-700 w-[40%]">
+        <div class="hidden sm:flex bg-linear-to-r from-indigo-900 via-blue-800 to-sky-700 w-[40%]">
             <div class="flex flex-col justify-between w-screen p-10 items-center">
                 <div class="text-gray-200">Your central hub for guides, support, and answers.</div>
                 <div class="">

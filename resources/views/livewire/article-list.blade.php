@@ -18,7 +18,7 @@
                 <input 
                     wire:model.live.debounce.300ms="search" 
                     type="text" 
-                    class="block w-full rounded-full border-0 py-4 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 shadow-lg" 
+                    class="block w-full rounded-full border-0 py-4 pl-10 text-gray-200 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6 shadow-lg" 
                     placeholder="Cari masalah anda (contoh: WiFi, Login)...">
             </div>
         </div>
