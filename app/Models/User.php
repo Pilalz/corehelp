@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Ticket;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -54,6 +55,16 @@ class User extends Authenticatable implements FilamentUser
     public function isUser(): bool
     {
         return $this->role === 'user';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isMe(): bool
+    {
+        return $this->id === auth()->id();
     }
 
     // Relasi: User punya banyak tiket

@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Ticket;
 use App\Models\TicketReply;
 use Livewire\WithFileUploads;
+use Filament\Notifications\Notification;
 
 class TicketShow extends Component
 {
@@ -64,6 +65,32 @@ class TicketShow extends Component
         $this->fileInputId++;
 
         $this->ticket->refresh();
+    }
+
+    public function markAsSolved()
+    {
+        $this->ticket->update([
+            'status' => 'closed',
+        ]);
+
+        $this->ticket->refresh();
+
+        Notification::make()
+            ->success()
+            ->title('Terima kasih!')
+            ->body('Tiket telah ditutup karena masalah terselesaikan.')
+            ->send();
+    }
+
+    public function markAsUnsolved()
+    {
+        $this->dispatch('focus-reply-box');
+        
+        Notification::make()
+            ->info()
+            ->title('Unsolved')
+            ->body('Silakan jelaskan kendala yang masih Anda alami di bawah.')
+            ->send();
     }
 
     public function render()

@@ -55,8 +55,22 @@
             @foreach($this->ticket->replies as $reply)
                 <div class="bg-white p-4 rounded-lg shadow {{ $reply->user->isUser() ? 'border-l-4 border-indigo-500 bg-indigo-50' : 'border-l-4 border-orange-400 bg-orange-50' }}">
                     <div class="flex justify-between mb-2">
-                        <span class="font-bold {{ $reply->user->isUser() ? 'text-indigo-600' : 'text-orange-600' }}">
-                            {{ $reply->user->name }} {{ $reply->user->isUser() ? '(User)' : '' }}
+                        @php
+                            $colorClass = match(true) {
+                                $reply->user->isUser()  => 'text-indigo-600',
+                                $reply->user->isAdmin() => 'text-orange-600',
+                                default                 => 'text-green-600', // Warna untuk role ke-3 (misal: Support)
+                            };
+
+                            $roleLabel = match(true) {
+                                $reply->user->isMe()    => '(You)',
+                                $reply->user->isUser()  => '',
+                                $reply->user->isAdmin() => '(Admin)',
+                                default                 => '(Support)',
+                            };
+                        @endphp
+                        <span class="font-bold {{ $colorClass }}">
+                            {{ $reply->user->name }} {{ $roleLabel }}
                         </span>
                         <span class="text-xs text-gray-500">{{ $reply->created_at->diffForHumans() }}</span>
                     </div>
@@ -94,11 +108,57 @@
             @endforeach
         </div>
 
+        @if($ticket->status !== 'closed' && $ticket->replies->last()?->user->isAdmin())
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-green-100 rounded-full text-green-600 hidden sm:block">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Apakah solusi di atas menjawab masalah Anda?</h3>
+                        <p class="text-sm text-gray-500 mt-1">
+                            Jika <strong>Ya</strong>, tiket akan ditutup otomatis. <br>
+                            Jika <strong>Tidak</strong>, Anda dapat melanjutkan percakapan.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <button 
+                        wire:click="markAsUnsolved" 
+                        class="flex-1 sm:flex-none px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 hover:text-red-600 transition"
+                    >
+                        Belum Selesai
+                    </button>
+
+                    <button 
+                        wire:click="markAsSolved" 
+                        class="flex-1 sm:flex-none px-4 py-2 bg-green-600 text-white font-bold rounded-lg shadow hover:bg-green-700 transition flex items-center justify-center gap-2"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Ya, Selesai
+                    </button>
+                </div>
+            </div>
+        </div>
+        @endif
+
         @if($this->ticket->status !== 'closed')
         <div class="bg-white p-6 shadow sm:rounded-lg">
             <h3 class="font-bold text-md mb-2">Balas Tiket</h3>
             <form wire:submit.prevent="saveReply">
-                <textarea wire:model="replyContent" wire:key="reply-box-{{ $fileInputId }}" class="w-full rounded border-gray-300" rows="3" placeholder="Tulis balasan..."></textarea>
+                <textarea 
+                    wire:model="replyContent" 
+                    wire:key="reply-box-{{ $fileInputId }}" 
+                    x-data 
+                    @focus-reply-box.window="$nextTick(() => $el.focus())" 
+                    class="w-full rounded border-gray-300" 
+                    rows="3" 
+                    placeholder="Tulis balasan...">
+                </textarea>
                 @error('replyContent') <div class="text-red-500 text-sm">{{ $message }}</div> @enderror
 
                 <div class="mt-2">
