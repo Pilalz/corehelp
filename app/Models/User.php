@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Ticket;
+use App\Models\Department;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +27,7 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'name',
         'email',
+        'department_id',
         'password',
         'role',
     ];
@@ -71,6 +74,11 @@ class User extends Authenticatable implements FilamentUser
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
     }
 
     public function canAccessPanel(Panel $panel): bool

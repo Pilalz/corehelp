@@ -28,6 +28,8 @@ class UsersTable
                         'admin' => 'success',
                     })
                     ->formatStateUsing(fn ($state) => ucwords(strtolower($state))),
+                TextColumn::make('department.name')
+                    ->badge(),
             ])
             ->filters([
                 SelectFilter::make('role')

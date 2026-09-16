@@ -23,6 +23,8 @@ class UserInfolist
                         TextEntry::make('role')
                             ->badge()
                             ->formatStateUsing(fn ($state) => ucwords(strtolower($state))),
+                        TextEntry::make('department.name')
+                            ->badge(),
                     ]),
             ]);
     }

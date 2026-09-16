@@ -32,6 +32,7 @@ class TicketsTable
                         'open' => 'primary',
                         're-open' => 'primary',
                         'solved' => 'success',
+                        'closed' => 'gray',
                         'rejected' => 'danger',
                     })
                     ->formatStateUsing(fn ($state) => ucwords(strtolower($state))),
@@ -51,8 +52,10 @@ class TicketsTable
                 SelectFilter::make('status')
                     ->options([
                         'open' => 'Open',
+                        're-open' => 'Re-open',
                         'solved' => 'Solved',
                         'rejected' => 'Rejected',
+                        'closed' => 'Closed',
                     ])
                     ->preload(),
                 SelectFilter::make('priority')

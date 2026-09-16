@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Category;
 use App\Models\Ticket;
+use App\Models\Department;
 use Livewire\WithFileUploads;
 
 class TicketCreate extends Component
@@ -52,7 +53,8 @@ class TicketCreate extends Component
     public function render()
     {
         return view('livewire.ticket-create', [
-            'categories' => Category::all()
+            'categories' => Category::all(),
+            'departments' => Department::all()
         ])->layout('layouts.app');
     }
 }

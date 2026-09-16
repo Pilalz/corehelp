@@ -11,6 +11,17 @@
                 </div>
 
                 <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">To Department</label>
+                    <select wire:model="category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="">Pilih Department</option>
+                        @foreach($departments as $dep)
+                            <option value="{{ $dep->id }}">{{ $dep->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('department_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700">Kategori</label>
                     <select wire:model="category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                         <option value="">Pilih Kategori</option>

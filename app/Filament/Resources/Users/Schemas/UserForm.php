@@ -35,6 +35,9 @@ class UserForm
                                 'admin' => 'Admin',
                             ])
                             ->default('user'), 
+                        Select::make('department_id')
+                            ->required()
+                            ->relationship('department', 'name'), 
                     ]),
             ]);
     }
